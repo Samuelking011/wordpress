@@ -9,7 +9,7 @@ variable "instance_type" {
 
 variable "ami_id" {
         description = "The AMI to use"
-        default = "ami-0230bd60aa48260c6"
+        default = "ami-0fa1ca9559f1892ec"
 }
 
 variable "number_of_instances" {

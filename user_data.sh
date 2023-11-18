@@ -3,30 +3,38 @@
 # Update the system
 sudo yum update -y
 
-# Install Nginx
-sudo yum install -y epel-release
-sudo yum install -y nginx
+# Install nginx
+sudo amazon-linux-extras list | grep nginx
+sudo amazon-linux-extras enable nginx1
+sudo yum clean metadata && sudo yum install nginx -y
 
-# Start and enable Nginx
+# Install PHO
+sudo amazon-linux-extras list | grep php
+sudo amazon-linux-extras enable php8.2
+sudo yum clean metadata && sudo yum install yum install php-cli php-pdo php-fpm php-mysqlnd -y
+
+# Start and enable Nginx and PHP-FPM
 sudo systemctl start nginx
 sudo systemctl enable nginx
-
-# Install PHP and MySQL
-sudo yum install -y php php-fpm php-mysqlnd
-
-# Start and enable PHP-FPM
 sudo systemctl start php-fpm
 sudo systemctl enable php-fpm
 
-# Install MySQL
-sudo yum install -y mysql-server
+# Configure Nginx for WordPress
+sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+sudo wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/nginx/nginx/master/conf/nginx.conf
+sudo sed -i 's/\/var\/www\/html/\/usr\/share\/nginx\/html\/wordpress/g' /etc/nginx/nginx.conf
+sudo systemctl restart nginx
 
-# Start and enable MySQL
-sudo systemctl start mysqld
-sudo systemctl enable mysqld
+# Install and configure MariaDB
+sudo amazon-linux-extras list | grep mariadb
+sudo amazon-linux-extras enable mariadb10.5
+sudo yum clean metadata && sudo yum install mariadb -y
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
 
-# Run MySQL secure installation
+# Secure MariaDB installation
 sudo mysql_secure_installation <<EOF
+
 y
 password
 password
@@ -45,44 +53,12 @@ sudo mysql -u root -ppassword -e "FLUSH PRIVILEGES;"
 # Download and configure WordPress
 sudo wget https://wordpress.org/latest.tar.gz
 sudo tar -xzvf latest.tar.gz
-sudo cp -R wordpress/* /usr/share/nginx/html/
-sudo chown -R nginx:nginx /usr/share/nginx/html/
-sudo rm -rf wordpress latest.tar.gz
+sudo mv wordpress /usr/share/nginx/html/
+sudo chown -R nginx:nginx /usr/share/nginx/html/wordpress
 
-# Create Nginx virtual host configuration for WordPress
-sudo tee /etc/nginx/conf.d/wordpress.conf > /dev/null <<EOL
-server {
-    listen 80;
-    server_name your_domain_or_ip;
+# Cleanup
+sudo rm -f latest.tar.gz
 
-    root /usr/share/nginx/html;
-    index index.php index.html index.htm;
-
-    location / {
-        try_files \$uri \$uri/ /index.php?\$args;
-    }
-
-    location ~ \.php$ {
-        try_files \$uri =404;
-        fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    error_page 404 /404.html;
-    location = /404.html {
-        root /usr/share/nginx/html;
-        internal;
-    }
-
-    error_page 500 502 503 504 /50x.html;
-    location = /50x.html {
-        root /usr/share/nginx/html;
-        internal;
-    }
-}
-EOL
-
-# Restart Nginx
-sudo systemctl restart nginx
+# Display the WordPress login URL
+echo "WordPress installation completed."
+echo "You can access WordPress at http://<your-ec2-public-ip>/wordpress"
