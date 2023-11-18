@@ -47,10 +47,7 @@ y
 EOF
 
 # Create WordPress database and user
-sudo mysql -u root -ppassword -e "CREATE DATABASE wordpress;"
-sudo mysql -u root -ppassword -e "CREATE USER 'wordpress'@'localhost' IDENTIFIED BY 'password';"
-sudo mysql -u root -ppassword -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpress'@'localhost';"
-sudo mysql -u root -ppassword -e "FLUSH PRIVILEGES;"
+mysql -u root -ppassword -e "CREATE DATABASE wordpress;"
 
 # Download and configure WordPress
 wget https://wordpress.org/latest.zip
