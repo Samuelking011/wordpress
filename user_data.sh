@@ -2,6 +2,8 @@
 
 # Update the system
 sudo yum update -y
+sudo yum install expect -y
+
 
 # Install nginx
 sudo amazon-linux-extras list | grep nginx
@@ -20,9 +22,9 @@ sudo systemctl start php-fpm
 sudo systemctl enable php-fpm
 
 # Configure Nginx for WordPress
-sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
-sudo wget -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/nginx/nginx/master/conf/nginx.conf
-sudo sed -i 's/\/var\/www\/html/\/usr\/share\/nginx\/html\/wordpress/g' /etc/nginx/nginx.conf
+sudo groupadd www-data
+sudo usermod -a -G nginx ec2-user
+sudo chown -R ec2-user:nginx /usr/share/nginx/html
 sudo systemctl restart nginx
 
 # Install and configure MariaDB
@@ -51,14 +53,24 @@ sudo mysql -u root -ppassword -e "GRANT ALL PRIVILEGES ON wordpress.* TO 'wordpr
 sudo mysql -u root -ppassword -e "FLUSH PRIVILEGES;"
 
 # Download and configure WordPress
-sudo wget https://wordpress.org/latest.tar.gz
-sudo tar -xzvf latest.tar.gz
-sudo mv wordpress /usr/share/nginx/html/
-sudo chown -R nginx:nginx /usr/share/nginx/html/wordpress
+wget https://wordpress.org/latest.zip
+unzip latest.zip
+mv wordpress/* /usr/share/nginx/html
+sudo chown -R ec2-user:nginx /usr/share/nginx/html
+rm -rf wordpress
 
-# Cleanup
-sudo rm -f latest.tar.gz
+#Configure WordPress
+cd /usr/share/nginx/html
+cp wp-config-sample.php wp-config.php
+config_file="/usr/share/nginx/html/wp-config.php"
 
-# Display the WordPress login URL
-echo "WordPress installation completed."
-echo "You can access WordPress at http://<your-ec2-public-ip>/wordpress"
+# Replace database_name_here with dbase
+sed -i "s/database_name_here/wordpress/g" "$config_file"
+
+# Replace username_here with root
+sed -i "s/username_here/root/g" "$config_file"
+
+# Replace password_here with the password you set earlier
+sed -i "s/password_here/password/g" "$config_file"
+
+
