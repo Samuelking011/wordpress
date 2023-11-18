@@ -23,9 +23,9 @@ sudo systemctl enable php-fpm
 
 # Configure Nginx for WordPress
 sudo groupadd www-data
-usermod -a -G nginx ec2-user
-chown -R ec2-user:nginx /usr/share/nginx/html
-2775 /usr/share/nginx/html
+sudo usermod -a -G nginx ec2-user
+sudo chown -R ec2-user:nginx /usr/share/nginx/html
+chmod 2775 /usr/share/nginx/html
 find /usr/share/nginx/html -type d -exec chmod 2775 {} \;
 find /usr/share/nginx/html -type f -exec chmod 0664 {} \;
 
@@ -62,7 +62,7 @@ SQL_COMMANDS="CREATE DATABASE IF NOT EXISTS $DB_NAME;
 USE $DB_NAME;"
 
 # Execute SQL commands using the mysql command
-mysql -u$DB_USER -p$DB_PASSWORD -e "$SQL_COMMANDS"
+sudo mysql -u$DB_USER -p$DB_PASSWORD -e "$SQL_COMMANDS"
 
 # Check if the database creation was successful
 if [ $? -eq 0 ]; then
