@@ -8,7 +8,20 @@ resource "aws_instance" "ec2_instance" {
 
     security_groups = [aws_security_group.ec2_elb.id]
 
-    user_data = file("user_data.sh")  # Read the script content from user_data.sh file
+    # Read the script content from user_data.sh file
+    user_data =  <<-EOF
+                 #!/bin/bash
+                 # This is user_data1.sh
+                 file("user_data.sh") 
+
+                 # Restart the shell
+                 exec bash
+                 
+                 # This is user_data2.sh
+                 file("user_data2.sh")
+
+
+                 EOF
 
     tags = {
       Name = "Terraform ec2"
