@@ -25,6 +25,10 @@ sudo systemctl enable php-fpm
 sudo groupadd www-data
 sudo usermod -a -G nginx ec2-user
 sudo chown -R ec2-user:nginx /usr/share/nginx/html
+chmod 2775 /usr/share/nginx/html
+find /usr/share/nginx/html -type d -exec chmod 2775 {} \;
+find /usr/share/nginx/html -type f -exec chmod 0664 {} \;
+
 sudo systemctl restart nginx
 
 # Install and configure MariaDB
