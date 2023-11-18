@@ -36,7 +36,7 @@ sudo systemctl enable mariadb
 
 # Secure MariaDB installation
 sudo mysql_secure_installation <<EOF
-
+y
 y
 password
 password
@@ -46,8 +46,41 @@ y
 y
 EOF
 
-# Create WordPress database and user
-mysql -u root -ppassword -e "CREATE DATABASE wordpress;"
+# Create WordPress database
+nano create_database.sh
+# Database credentials
+DB_USER="root"
+DB_PASSWORD="password"  # Replace with your actual MariaDB root password
+DB_NAME="wordpress"      # Replace with your desired database name
+
+# SQL commands to create the database
+SQL_COMMANDS="CREATE DATABASE IF NOT EXISTS $DB_NAME;
+USE $DB_NAME;"
+
+# Execute SQL commands using the mysql command
+mysql -u$DB_USER -p$DB_PASSWORD -e "$SQL_COMMANDS"
+
+# Check if the database creation was successful
+if [ $? -eq 0 ]; then
+    echo "Database $DB_NAME created successfully."
+else
+    echo "Error: Failed to create database $DB_NAME."
+fi
+
+# Use expect to send keypresses to the terminal
+expect <<EOF
+spawn nano
+send "\x18"  # Ctrl+X
+send "Y"     # Y for Yes (to confirm save)
+send "\r"    # Enter
+expect eof   # Wait for the process to finish
+EOF
+
+chmod +x create_database.sh
+./create_database.sh
+
+
+
 
 # Download and configure WordPress
 wget https://wordpress.org/latest.zip
