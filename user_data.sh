@@ -62,6 +62,8 @@ rm -rf wordpress
 #Configure WordPress
 cd /usr/share/nginx/html
 cp wp-config-sample.php wp-config.php
+cd
+nano config_update.sh
 config_file="/usr/share/nginx/html/wp-config.php"
 
 # Replace database_name_here with dbase
@@ -72,5 +74,18 @@ sed -i "s/username_here/root/g" "$config_file"
 
 # Replace password_here with the password you set earlier
 sed -i "s/password_here/password/g" "$config_file"
+
+# Use expect to send keypresses to the terminal
+expect <<EOF
+spawn nano
+send "\x18"  # Ctrl+X
+send "Y"     # Y for Yes (to confirm save)
+send "\r"    # Enter
+expect eof   # Wait for the process to finish
+EOF
+
+chmod +x config_update.sh
+./config_update.sh
+
 
 
