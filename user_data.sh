@@ -18,12 +18,12 @@ sudo yum clean metadata && sudo yum install yum install php-cli php-pdo php-fpm 
 # Start and enable Nginx and PHP-FPM
 sudo systemctl start nginx
 sudo systemctl enable nginx
-sudo systemctl start php-fpm
 sudo systemctl enable php-fpm
+sudo systemctl start php-fpm
 
 # Configure Nginx for WordPress
 sudo groupadd www-data
 sudo usermod -a -G nginx ec2-user
 sudo chown -R ec2-user:nginx /usr/share/nginx/html
 
-
+exit

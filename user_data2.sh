@@ -87,6 +87,6 @@ send "\r"    # Enter
 expect eof   # Wait for the process to finish
 EOF
 
-chmod +x config_update.sh
+#chmod +x config_update.sh
 ./config_update.sh
 
