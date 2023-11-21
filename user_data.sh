@@ -26,4 +26,5 @@ sudo groupadd www-data
 sudo usermod -a -G nginx ec2-user
 sudo chown -R ec2-user:nginx /usr/share/nginx/html
 
-exit
+# Restart the shell
+exec bash
