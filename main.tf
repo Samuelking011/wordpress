@@ -1,11 +1,15 @@
 data "template_cloudinit_config" "user-data" {
 part {
   content_type = "text/x-shellscript"
-  content      = file("user_data.sh")
+  content      = file("./user_data/user_data.sh")
 }
 part {
   content_type = "text/x-shellscript"
-  content      = file("user_data2.sh")
+  content      = file("./user_data/user_data2.sh")
+}
+part {
+  content_type = "text/x-shellscript"
+  content      = file("./user_data/user_data3.sh")
 }
 }
 
