@@ -7,10 +7,7 @@ part {
   content_type = "text/x-shellscript"
   content      = file("./user_data/user_data2.sh")
 }
-part {
-  content_type = "text/x-shellscript"
-  content      = file("./user_data/user_data3.sh")
-}
+
 }
 
 

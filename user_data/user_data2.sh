@@ -90,3 +90,18 @@ EOF
 #chmod +x config_update.sh
 ./config_update.sh
 
+#Configure WordPress
+cd /usr/share/nginx/html
+
+cd wp-content
+
+sudo mkdir -p /usr/share/nginx/html/wp-content/upgrade
+
+sudo mkdir -p /usr/share/nginx/html/wp-content/uploads
+
+sudo chmod  755 -R nginx:www-data /usr/share/nginx/html/wp-content
+
+cd /usr/share/nginx/html
+
+sudo chmod  755 -R nginx:www-data /usr/share/nginx/html
+
